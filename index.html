@@ -6,13 +6,15 @@
 
     <title>Anthony Liu</title>
 
-    <link href='https://fonts.googleapis.com/css?family=Dosis:400,200' rel='stylesheet' type='text/css'> 
+    <link href="assets/images/favicon.png" rel="icon" type="image/png">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,200" rel="stylesheet" type="text/css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
     <style>
     html {
       background: linear-gradient(
-        rgba(100, 50, 100, 0.618),
-        rgba(100, 50, 100, 0.0)
+        rgba(255, 255, 255, 0.37),
+        rgba(255, 255, 255, 0.37)
       ), url('assets/images/cover3_small.png');
       min-height: 100%;
       background-size: cover;
@@ -29,17 +31,51 @@
       text-align: center;
     }
 
-    h1 {
+    .base-cont {
       position: absolute;
       bottom: 4rem;
       left: 0;
       right: 0;
+      color: #373737;
+    }
+
+    .base-cont h1 {
       font-family: Dosis, sans-serif;
       text-transform: lowercase;
+    }
+
+    .base-cont a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.2s linear 0s;
+    }
+
+    .base-cont a:hover {
+      color: #2563A8;
+    }
+
+    .availability {
+      margin-top: 1rem;
+    }
+
+    .base-cont hr {
+      border: none;
+      border-top: 1px solid #CDCDCD;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      width: 16%;
     }
     </style>
   </head>
   <body>
-    <h1>Anthony Liu</h1>
+    <div class="base-cont">
+      <h1>Anthony Liu</h1>
+      <a class="fa fa-github-alt fa-3x" href="https://github.com/turbomaze" target="_blank"></a>
+      <a class="fa fa-linkedin-square fa-3x" href="https://linkedin.com/in/anthonyscottliu/" target="_blank"></a>
+      <a class="fa fa-cube fa-3x" href="https://igliu.com" target="_blank"></a>
+      <div class="availability">
+        <a href="availability/"><i class="fa fa-calendar-check-o"></i> availability</a>
+      </div>
+    </div>
   </body>
 </html>

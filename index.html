@@ -9,63 +9,10 @@
     <link href="assets/images/favicon.png" rel="icon" type="image/png">
     <link href="https://fonts.googleapis.com/css?family=Dosis:400,200" rel="stylesheet" type="text/css"> 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    <style>
-    html {
-      background: linear-gradient(
-        rgba(255, 255, 255, 0.37),
-        rgba(255, 255, 255, 0.37)
-      ), url('assets/images/cover3_small.png');
-      min-height: 100%;
-      background-size: cover;
-      background-position: center;
-    };
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-
-    body {
-      text-align: center;
-    }
-
-    .base-cont {
-      position: absolute;
-      bottom: 4rem;
-      left: 0;
-      right: 0;
-      color: #373737;
-    }
-
-    .base-cont h1 {
-      font-family: Dosis, sans-serif;
-      text-transform: lowercase;
-    }
-
-    .base-cont a {
-      text-decoration: none;
-      color: inherit;
-      transition: color 0.2s linear 0s;
-    }
-
-    .base-cont a:hover {
-      color: #2563A8;
-    }
-
-    .availability {
-      margin-top: 1rem;
-    }
-
-    .base-cont hr {
-      border: none;
-      border-top: 1px solid #CDCDCD;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      width: 16%;
-    }
-    </style>
+    <script src="js/canvashelpers.js"></script>
+    <script src="js/main.js"></script>
 
     <script type="text/javascript">
     window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var n=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(n?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var o=document.getElementsByTagName("script")[0];o.parentNode.insertBefore(a,o);for(var r=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=r(p[c])};
@@ -73,6 +20,10 @@
     </script>
   </head>
   <body>
+    <div class="canvas-cont">
+			<canvas id="canvas"></canvas>
+    </div>
+
     <div class="base-cont">
       <h1>Anthony Liu</h1>
       <a class="fa fa-github-alt fa-3x" href="https://github.com/turbomaze" target="_blank"></a>

@@ -1,0 +1,60 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  text-align: center;
+}
+
+.base-cont {
+  position: absolute;
+  bottom: 4rem;
+  left: 0;
+  right: 0;
+  color: #373737;
+}
+
+.base-cont h1 {
+  font-family: Dosis, sans-serif;
+  text-transform: lowercase;
+}
+
+.base-cont a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s linear 0s;
+}
+
+.base-cont a:hover {
+  color: #2563A8;
+}
+
+.availability {
+  margin-top: 1rem;
+}
+
+.base-cont hr {
+  border: none;
+  border-top: 1px solid #CDCDCD;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 16%;
+	z-index: 1;
+}
+
+/* canvas overlay */
+.canvas-cont {
+  position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.canvas-cont canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+

@@ -16,10 +16,10 @@ var Crush = (function() {
       ctx.fillStyle = color || 'white';
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     },
-    getColorStr: function(cols, opacity) {
+    getColorStr: function(cols) {
       var mid = '('+cols[0]+','+cols[1]+','+cols[2];
-      if (arguments.length === 2) {
-        return 'rgba'+mid+','+opacity+')';
+      if (cols.length === 4) {
+        return 'rgba'+mid+','+cols[3]+')';
       } else {
         return 'rgb'+mid+')';
       }

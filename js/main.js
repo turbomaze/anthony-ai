@@ -13,8 +13,9 @@ anthony.ai = (function() {
   // config
   var DIMS = [400, 400];
   var IMAGE_WIDTH = 400;
-  var NUM_INIT_POINTS = 1000;
-  var MAX_POINT_RAD = 6;
+  var NUM_INIT_POINTS = 3016;
+  var NUM_INIT_EDGES = 500;
+  var MAX_POINT_RAD = 3;
   var FPS = 30;
 
   // work variables
@@ -22,6 +23,7 @@ anthony.ai = (function() {
   var ctx;
   var facePixels;
   var facePoints;
+  var edges;
 
   // work functions
   function initAnthonyAI() {
@@ -34,6 +36,9 @@ anthony.ai = (function() {
         facePixels = pixels;
         facePoints = getNPointsFromPixels(
           NUM_INIT_POINTS, facePixels.data
+        );
+        edges = getEdgesFromPoints(
+          NUM_INIT_EDGES, facePoints
         );
 
         // initialize canvas stuff
@@ -53,19 +58,19 @@ anthony.ai = (function() {
   }
 
   function render(repeat) {
-    // modify the pixels
-    ctx.translate(4*Math.random()-2, 4*Math.random()-2);
-    for (var i = 0; i < facePoints.length; i++) {
-      // draw the point
-      var point = facePoints[i];
-      var pos = [
-        point[0][0] + canvas.width/2 - IMAGE_WIDTH/2,
-        point[0][1]
-      ];
-      var size = point[1];
-      var color = point[2];
-      Crush.drawPoint(ctx, pos, size, Crush.getColorStr(color));
-    }
+    // clear the canvas
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // draw the picture
+    // ctx.putImageData(facePixels, canvas.width/2 - IMAGE_WIDTH/2 , 0);
+
+    // handle the points
+    handlePoints();
+
+    // handle the edges
+    handleEdges();
 
     if (repeat === true) {
       setTimeout(function() {
@@ -74,12 +79,98 @@ anthony.ai = (function() {
     }
   }
 
-  function getNPointsFromPixels(n, pixels) {
-     var points = [];
-      for (var i = 0; i < n; i++) {
-        points.push(getPointFromPixels(pixels));
+  function handlePoints() {
+    for (var i = 0; i < facePoints.length; i++) {
+      // draw the point
+      var point = facePoints[i];
+      var size = point[0];
+      var pos = [
+        point[3][0] + canvas.width/2 - IMAGE_WIDTH/2,
+        point[3][1]
+      ];
+      var boundedX = Math.min(
+        Math.max(Math.floor(point[3][0]), 0), IMAGE_WIDTH-1
+      );
+      var boundedY = Math.min(
+        Math.max(Math.floor(point[3][1]), 0),
+        facePixels.data.length/(4*IMAGE_WIDTH)
+      );
+      var idx = 4*(boundedY*IMAGE_WIDTH + boundedX);
+      var color = [
+        facePixels.data[idx+0],
+        facePixels.data[idx+1],
+        facePixels.data[idx+2],
+        facePixels.data[idx+3]
+      ];
+      Crush.drawPoint(ctx, pos, size, Crush.getColorStr(color));
+
+      // slow down based on the distance
+      var dist = getMagnitude([
+        point[1][0]-point[3][0],
+        point[1][1]-point[3][1]
+      ]);
+      var thresh = 10;
+      if (dist > thresh) {
+        // accelerate towards the original position
+        point[5][0] += (point[1][0]-point[3][0])/4;
+        point[5][1] += (point[1][1]-point[3][1])/4;
+      } else {
+        // accelerate the point
+        var mag = 0.2;
+        facePoints[i][5][0] += mag*Math.random() - mag/2;
+        facePoints[i][5][1] += mag*Math.random() - mag/2;
       }
-      return points;
+
+      // move the point
+      var mag = 0.5*getMagnitude([point[5][0], point[5][1]]);
+      facePoints[i][3][0] += point[5][0]/mag;
+      facePoints[i][3][1] += point[5][1]/mag;
+    }
+  }
+
+  function handleEdges() {
+    for (var i = 0; i < edges.length; i++) {
+      var edge = edges[i];
+      var a = facePoints[edge[0]];
+      var b = facePoints[edge[1]];
+      var color = getMiddleColor(a[2], b[2]);
+      Crush.drawLine(
+        ctx, [
+          a[3][0] + canvas.width/2 - IMAGE_WIDTH/2,
+          a[3][1]
+        ], [
+          b[3][0] + canvas.width/2 - IMAGE_WIDTH/2,
+          b[3][1]
+        ], 'rgba(100, 100, 100, 0.2)', 0.001
+      );
+    }
+  }
+
+  function getNPointsFromPixels(n, pixels) {
+    var points = [];
+    for (var i = 0; i < n; i++) {
+      points.push(getPointFromPixels(pixels));
+    }
+    return points;
+  }
+
+  function getEdgesFromPoints(n, points) {
+    var edges = [];
+    for (var i = 0; i < n; i++) {
+      var idxA = Math.floor(Math.random()*points.length);
+      var idxB = Math.floor(Math.random()*points.length);
+      var pointA = points[idxA];
+      var pointB = points[idxB];
+      var dist = getMagnitude([
+        pointA[3][0]-pointB[3][0],
+        pointA[3][1]-pointB[3][1]
+      ]);
+      var threshold = 150;
+      if (dist < threshold) {
+        edges.push([idxA, idxB]);
+      }
+    }
+    return edges;
   }
 
   function getPointFromPixels(pixels) {
@@ -94,18 +185,38 @@ anthony.ai = (function() {
       var x = idx % IMAGE_WIDTH;
       var y = Math.floor(idx/IMAGE_WIDTH);
       return [
-        [x, y],
+        // size
         Math.random() * MAX_POINT_RAD,
-        color
+
+        // original position
+        [x, y],
+
+        // original color
+        color,
+
+        // current position
+        [x, y],
+
+        // current color
+        color,
+
+        // current velocity
+        [0.2*Math.random()-0.1, 0.2*Math.random()-0.1]
       ];
     }
   }
 
   // helper functions
+  function getMiddleColor(a, b) {
+    return a.map(function(comp, idx) {
+      return (comp + b[idx])/2;
+    });
+  }
+ 
   function getMagnitude(v) {
-    return v.reduce(function(a, b) {
+    return Math.sqrt(v.reduce(function(a, b) {
       return a + b*b;
-    }, 0);
+    }, 0));
   }
 
   function $s(id) { //for convenience

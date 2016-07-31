@@ -16,13 +16,15 @@ anthony.ai = (function() {
   var NUM_INIT_POINTS = 1618;
   var MAX_POINT_RAD = 3;
   var FPS = 30;
+	var MAX_VEL = 2;
 
   // work variables
   var canvas;
-  var ctx;
+ 	var ctx;
   var facePixels;
   var facePoints;
   var edges;
+  var adjacencyList;
 
   // work functions
   function initAnthonyAI() {
@@ -37,6 +39,7 @@ anthony.ai = (function() {
           NUM_INIT_POINTS, facePixels.data
         );
         edges = getEdgesFromPoints(facePoints);
+				adjacencyList = getAdjacencyListFromEdges(edges);
 
         // initialize canvas stuff
         canvas = $s('#canvas');
@@ -56,12 +59,14 @@ anthony.ai = (function() {
 
   function render(repeat) {
     // clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // draw the picture
-    // ctx.putImageData(facePixels, canvas.width/2 - IMAGE_WIDTH/2 , 0);
+    // ctx.putImageData(
+		// 	facePixels, canvas.width/2 - IMAGE_WIDTH/2 , 0
+		// );
 
     // handle the points
     handlePoints();
@@ -110,22 +115,26 @@ anthony.ai = (function() {
         point[1][0]-point[3][0],
         point[1][1]-point[3][1]
       ]);
-      var thresh = 10;
+      var thresh = 5;
       if (dist > thresh) {
         // accelerate towards the original position
-        point[5][0] += (point[1][0]-point[3][0])/4;
-        point[5][1] += (point[1][1]-point[3][1])/4;
-      } else {
-        // accelerate the point
-        var mag = 0.2;
-        facePoints[i][5][0] += mag*Math.random() - mag/2;
-        facePoints[i][5][1] += mag*Math.random() - mag/2;
+        point[5][0] += (point[1][0]-point[3][0])/8;
+        point[5][1] += (point[1][1]-point[3][1])/8;
       }
 
+      // accelerate the point based on neighbors
+			var force = getForce(i);
+      facePoints[i][5][0] += force[0];
+      facePoints[i][5][1] += force[1];
+
       // move the point
-      var mag = 0.5*getMagnitude([point[5][0], point[5][1]]);
-      facePoints[i][3][0] += point[5][0]/mag;
-      facePoints[i][3][1] += point[5][1]/mag;
+      var mag = getMagnitude([point[5][0], point[5][1]]);
+			if (mag > MAX_VEL) {
+      	facePoints[i][5][0] = MAX_VEL*point[5][0]/mag;
+      	facePoints[i][5][1] = MAX_VEL*point[5][1]/mag;
+			}
+      facePoints[i][3][0] += facePoints[i][5][0];
+      facePoints[i][3][1] += facePoints[i][5][1];
     }
   }
 
@@ -169,6 +178,27 @@ anthony.ai = (function() {
 		return delaunayEdges;
   }
 
+	function getAdjacencyListFromEdges(edgeList) {
+		var adjList = {};
+		edgeList.forEach(function(edge) {
+			if (edge[0] in adjList) {
+				if (adjList[edge[0]].indexOf(edge[1]) === -1) {
+					adjList[edge[0]].push(edge[1]);
+				}
+			} else {
+				adjList[edge[0]] = [edge[1]];
+			}
+			if (edge[1] in adjList) {
+				if (adjList[edge[1]].indexOf(edge[0]) === -1) {
+					adjList[edge[1]].push(edge[0]);
+				}
+			} else {
+				adjList[edge[1]] = [edge[0]];
+			}
+		});
+		return adjList;
+	}
+
   function getPointFromPixels(pixels) {
     var idx = Math.floor(Math.random()*(pixels.length/4));
     var color = [
@@ -197,10 +227,32 @@ anthony.ai = (function() {
         color,
 
         // current velocity
-        [0.2*Math.random()-0.1, 0.2*Math.random()-0.1]
+        [0, 0]
       ];
     }
   }
+
+	function getForce(idx) {
+		if (!(idx in adjacencyList)) {
+			return [0, 0];
+		}
+
+		var point = facePoints[idx];
+		var pos = point[3];
+		var neighbors = adjacencyList[idx].map(function(a) {
+			return facePoints[a];
+		});
+
+		return neighbors.reduce(function(force, a) {
+			// add the contribution from this neighbor
+			var npos = a[3];
+			var vec = [pos[0]-npos[0], pos[1]-npos[1]];
+			var dist = getMagnitude(vec);
+			force[0] += vec[0]/(dist*dist);
+			force[1] += vec[1]/(dist*dist);
+			return force;
+		}, [0, 0]);
+	}
 
   // helper functions
   function getMiddleColor(a, b) {

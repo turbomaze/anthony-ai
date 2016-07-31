@@ -13,8 +13,7 @@ anthony.ai = (function() {
   // config
   var DIMS = [400, 400];
   var IMAGE_WIDTH = 400;
-  var NUM_INIT_POINTS = 3016;
-  var NUM_INIT_EDGES = 500;
+  var NUM_INIT_POINTS = 1618;
   var MAX_POINT_RAD = 3;
   var FPS = 30;
 
@@ -37,9 +36,7 @@ anthony.ai = (function() {
         facePoints = getNPointsFromPixels(
           NUM_INIT_POINTS, facePixels.data
         );
-        edges = getEdgesFromPoints(
-          NUM_INIT_EDGES, facePoints
-        );
+        edges = getEdgesFromPoints(facePoints);
 
         // initialize canvas stuff
         canvas = $s('#canvas');
@@ -59,9 +56,9 @@ anthony.ai = (function() {
 
   function render(repeat) {
     // clear the canvas
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // draw the picture
     // ctx.putImageData(facePixels, canvas.width/2 - IMAGE_WIDTH/2 , 0);
@@ -81,7 +78,7 @@ anthony.ai = (function() {
 
   function handlePoints() {
     for (var i = 0; i < facePoints.length; i++) {
-      // draw the point
+      // get the point's state
       var point = facePoints[i];
       var size = point[0];
       var pos = [
@@ -95,14 +92,18 @@ anthony.ai = (function() {
         Math.max(Math.floor(point[3][1]), 0),
         facePixels.data.length/(4*IMAGE_WIDTH)
       );
+
+      // update its current color and draw it
       var idx = 4*(boundedY*IMAGE_WIDTH + boundedX);
-      var color = [
+      facePoints[i][4] = [
         facePixels.data[idx+0],
         facePixels.data[idx+1],
         facePixels.data[idx+2],
         facePixels.data[idx+3]
       ];
-      Crush.drawPoint(ctx, pos, size, Crush.getColorStr(color));
+      Crush.drawPoint(
+        ctx, pos, size, Crush.getColorStr(facePoints[i][4])
+      );
 
       // slow down based on the distance
       var dist = getMagnitude([
@@ -133,7 +134,7 @@ anthony.ai = (function() {
       var edge = edges[i];
       var a = facePoints[edge[0]];
       var b = facePoints[edge[1]];
-      var color = getMiddleColor(a[2], b[2]);
+      var color = getMiddleColor(a[4], b[4]);
       Crush.drawLine(
         ctx, [
           a[3][0] + canvas.width/2 - IMAGE_WIDTH/2,
@@ -141,7 +142,7 @@ anthony.ai = (function() {
         ], [
           b[3][0] + canvas.width/2 - IMAGE_WIDTH/2,
           b[3][1]
-        ], 'rgba(100, 100, 100, 0.2)', 0.001
+        ], Crush.getColorStr(color), 0.3
       );
     }
   }
@@ -154,23 +155,18 @@ anthony.ai = (function() {
     return points;
   }
 
-  function getEdgesFromPoints(n, points) {
-    var edges = [];
-    for (var i = 0; i < n; i++) {
-      var idxA = Math.floor(Math.random()*points.length);
-      var idxB = Math.floor(Math.random()*points.length);
-      var pointA = points[idxA];
-      var pointB = points[idxB];
-      var dist = getMagnitude([
-        pointA[3][0]-pointB[3][0],
-        pointA[3][1]-pointB[3][1]
-      ]);
-      var threshold = 150;
-      if (dist < threshold) {
-        edges.push([idxA, idxB]);
-      }
-    }
-    return edges;
+  function getEdgesFromPoints(points) {
+		var coordinateIndex = 3;
+		var triplets = Delaunay.triangulate(
+			points, coordinateIndex
+		);
+		var delaunayEdges = [];
+		for (var i = 0; i < triplets.length; i += 3) {
+			delaunayEdges.push([triplets[i+0], triplets[i+1]]);
+			delaunayEdges.push([triplets[i+0], triplets[i+2]]);
+			delaunayEdges.push([triplets[i+1], triplets[i+2]]);
+		}
+		return delaunayEdges;
   }
 
   function getPointFromPixels(pixels) {
@@ -208,6 +204,7 @@ anthony.ai = (function() {
 
   // helper functions
   function getMiddleColor(a, b) {
+    return a;
     return a.map(function(comp, idx) {
       return (comp + b[idx])/2;
     });

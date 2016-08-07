@@ -14,7 +14,7 @@ anthony.ai = (function() {
   var DIMS = [400, 400];
   var IMAGE_WIDTH = 400;
   var NUM_INIT_POINTS = 1618;
-  var MAX_POINT_RAD = 3;
+  var MAX_POINT_RAD = 1;
   var FPS = 30;
 	var MAX_VEL = 2;
 
@@ -55,6 +55,12 @@ anthony.ai = (function() {
         render(true);
       }
     );
+
+    // init smooth scroll
+    smoothScroll.init({
+    	speed: 300,
+    	updateURL: false
+		});
   }
 
   function render(repeat) {
@@ -205,7 +211,7 @@ anthony.ai = (function() {
       pixels[4*idx], pixels[4*idx+1], pixels[4*idx+2], pixels[4*idx+3]
     ];
     // skip white
-    if (getMagnitude(color) > getMagnitude([250,250,250,255])) {
+    if (color[3] < 255) {
       return getPointFromPixels(pixels);
     } else {
       var x = idx % IMAGE_WIDTH;

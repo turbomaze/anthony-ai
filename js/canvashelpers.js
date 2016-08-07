@@ -1,6 +1,10 @@
 //Canvas bRUSH - tools for drawing to HTML5 canvases
 //@author Anthony -- https://igliu.com
 var Crush = (function() {
+	// internal state
+	var COLOR_DICT_RGB = {};
+	var COLOR_DICT_RGBA = {};
+
   //internal helpers
   function resizeCanvas(canvas, every) {
     var width = canvas.parentNode.offsetWidth;

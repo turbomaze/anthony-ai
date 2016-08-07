@@ -6,26 +6,26 @@ html, body {
 
 body {
   text-align: center;
-  background-color: #fefaff;
+  background-color: #fffefa;
 }
 
-.base-cont {
-  position: absolute;
-  bottom: 4rem;
-  left: 0;
-  right: 0;
-  color: #373737;
-}
-
-.base-cont h1 {
-  font-family: Dosis, sans-serif;
-  text-transform: lowercase;
-}
-
-.base-cont a {
+a {
   text-decoration: none;
   color: inherit;
   transition: color 0.2s linear 0s;
+}
+
+.base-cont {
+  font-family: Dosis, sans-serif;
+  position: absolute;
+  bottom: 2.5rem;
+  left: 0;
+  right: 0;
+  color: #2b1b0b;
+}
+
+.base-cont h1 {
+  text-transform: lowercase;
 }
 
 .base-cont a:hover {
@@ -50,6 +50,7 @@ body {
   position: relative;
 	width: 100%;
 	height: 100%;
+  display: table;
 }
 
 .canvas-cont canvas {
@@ -59,3 +60,30 @@ body {
 	z-index: 0;
 }
 
+/* sections */
+section.chunk {
+  font-family: Dosis, sans-serif;
+  height: 100%;
+}
+
+section.chunk h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+section.chunk-one {
+  background: #050545;
+  color: #fffefa;
+}
+
+section.chunk-two {
+  background: #07cddb;
+  color: #fffefa;
+}
+
+section.chunk-three {
+  background: #fef5ff;
+  color: #2b1b0b;
+}

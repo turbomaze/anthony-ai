@@ -17,11 +17,10 @@ a {
 
 .base-cont {
   font-family: Dosis, sans-serif;
-  position: absolute;
-  bottom: 2.5rem;
+  position: relative;
+  bottom: 12.5rem;
   left: 0;
   right: 0;
-  color: #2b1b0b;
 }
 
 .base-cont h1 {
@@ -32,10 +31,6 @@ a {
   color: #2563A8;
 }
 
-.availability {
-  margin-top: 1rem;
-}
-
 .base-cont hr {
   border: none;
   border-top: 1px solid #CDCDCD;
@@ -43,6 +38,10 @@ a {
   margin-bottom: 1rem;
   width: 16%;
 	z-index: 1;
+}
+
+.availability {
+  margin-top: 1rem;
 }
 
 /* canvas overlay */
@@ -71,6 +70,14 @@ section.chunk h1 {
   margin-bottom: 0;
   padding-top: 1em;
   padding-bottom: 1em;
+}
+
+section.chunk-zero .base-cont {
+  color: #2b1b0b;
+}
+
+section.chunk-two .base-cont {
+  bottom: 4rem;
 }
 
 section.chunk-one {

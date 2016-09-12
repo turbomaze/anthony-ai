@@ -19,11 +19,12 @@ anthony.ai = (function() {
   function initAnthonyAI() {
     var faceCanvas = $s('#canvas');
     var faceRenderer = new NetworkRenderer(faceCanvas, faceUrl, {
-      numInitPoints: 100,
-      fillColor: 'rgba(255, 254, 250, 0.2)'
+      numInitPoints: 1000,
+      fillColor: 'rgba(255, 254, 250, 0.07)'
     });
     faceRenderer.start();
 
+    /*
     var faceCanvas2 = $s('#canvas2');
     var faceRenderer2 = new NetworkRenderer(faceCanvas2,
       'assets/images/profile_pic.jpg', {
@@ -41,6 +42,7 @@ anthony.ai = (function() {
       maxPointRadius: 4
     });
     faceRenderer3.start();
+    */
 
     // init smooth scroll
     smoothScroll.init({

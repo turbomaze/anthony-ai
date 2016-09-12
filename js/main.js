@@ -24,7 +24,6 @@ anthony.ai = (function() {
     });
     faceRenderer.start();
 
-    /*
     var faceCanvas2 = $s('#canvas2');
     var faceRenderer2 = new NetworkRenderer(faceCanvas2,
       'assets/images/profile_pic.jpg', {
@@ -42,7 +41,6 @@ anthony.ai = (function() {
       maxPointRadius: 4
     });
     faceRenderer3.start();
-    */
 
     // init smooth scroll
     smoothScroll.init({

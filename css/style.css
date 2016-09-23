@@ -18,7 +18,6 @@ a {
 .base-cont {
   font-family: Dosis, sans-serif;
   position: relative;
-  bottom: 12.5rem;
   left: 0;
   right: 0;
 }
@@ -74,6 +73,12 @@ section.chunk h1 {
 
 section.chunk-zero .base-cont {
   color: #2b1b0b;
+  bottom: 12.5rem;
+}
+
+section.chunk-one .about-cont {
+  padding-top: 200px;
+  text-align: center;
 }
 
 section.chunk-two .base-cont {
@@ -81,16 +86,58 @@ section.chunk-two .base-cont {
 }
 
 section.chunk-one {
-  background: #050545;
-  color: #fffefa;
-}
-
-section.chunk-two {
   background: #07cddb;
   color: #fffefa;
 }
 
+.propic {
+  width: 200px;
+  border-radius: 100px;
+}
+
+section.chunk-two {
+  background: #13A0CF;
+  color: #fffefa;
+}
+
 section.chunk-three {
-  background: #fef5ff;
+  background: #050545;
   color: #2b1b0b;
+}
+
+section.chunk-one .about-cont .propic-cont {
+  width: 45%;
+  float: left;
+  text-align: right;
+  padding-right: 2%;
+}
+
+section.chunk-one .about-cont .about-desc {
+  width: 51%;
+  float: right;
+  text-align: left;
+  padding-left: 2%;
+  font-size: 1.25rem;
+}
+
+section.chunk-one .about-cont .about-desc a {
+  color: #ADFAFF;
+}
+
+section.chunk-one .about-cont .about-desc p {
+  width: 400px;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.clear {
+  clear: both;
 }
